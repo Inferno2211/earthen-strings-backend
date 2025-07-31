@@ -34,6 +34,8 @@ npm start
 - **Sorting** by any field in ascending or descending order
 - **Toggle functionality** for boolean fields (isNew, published, artistPick)
 - **Category population** in product responses
+- **File uploads** with Cloudinary integration and web optimization
+- **Automatic image deletion** when entities are deleted or updated
 - **Error handling** with descriptive messages
 - **CORS enabled** for frontend integration
 
@@ -44,13 +46,26 @@ backend/
 ├── src/
 │   ├── controllers/
 │   │   ├── categoryController.js
-│   │   └── productController.js
+│   │   ├── productController.js
+│   │   ├── bannerController.js
+│   │   ├── instagramPostController.js
+│   │   └── uploadController.js
 │   ├── models/
 │   │   ├── Category.js
-│   │   └── Product.js
+│   │   ├── Product.js
+│   │   ├── Banner.js
+│   │   └── InstagramPost.js
 │   ├── routes/
 │   │   ├── categoryRoutes.js
-│   │   └── productRoutes.js
+│   │   ├── productRoutes.js
+│   │   ├── bannerRoutes.js
+│   │   ├── instagramPostRoutes.js
+│   │   ├── uploadRoutes.js
+│   │   └── index.js
+│   ├── services/
+│   │   └── cloudinaryService.js
+│   └── utils/
+│       └── cloudinaryUtils.js
 │   ├── db.js
 │   └── index.js
 ├── API_DOCUMENTATION.md

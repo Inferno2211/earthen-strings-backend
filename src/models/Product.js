@@ -32,7 +32,7 @@ const productSchema = new mongoose.Schema({
         required: [true, 'Product description is required'],
         trim: true
     },
-    isNew: {
+    isNewProduct: {
         type: Boolean,
         default: false
     },

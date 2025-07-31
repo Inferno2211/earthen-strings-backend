@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Category = require('../models/Category');
+const { deleteImageFromCloudinary } = require('../utils/cloudinaryUtils');
 
 // Create category
 const createCategory = async (req, res) => {
@@ -100,6 +101,11 @@ const updateCategory = async (req, res) => {
             });
         }
 
+        // Delete old image if new image is provided
+        if (image && category.image && image !== category.image) {
+            await deleteImageFromCloudinary(category.image);
+        }
+
         if (name) category.name = name;
         if (description) category.description = description;
         if (image) category.image = image;
@@ -137,9 +143,14 @@ const deleteCategory = async (req, res) => {
             });
         }
 
+        // Delete associated image from Cloudinary
+        if (category.image) {
+            await deleteImageFromCloudinary(category.image);
+        }
+
         res.status(200).json({
             success: true,
-            message: 'Category deleted successfully'
+            message: 'Category and associated image deleted successfully'
         });
     } catch (error) {
         res.status(500).json({

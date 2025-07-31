@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Product = require('../models/Product');
+const { deleteImageFromCloudinary } = require('../utils/cloudinaryUtils');
 
 // Create product
 const createProduct = async (req, res) => {
@@ -151,44 +152,49 @@ const getAllProducts = async (req, res) => {
 
 // Update product
 const updateProduct = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const updateData = req.body;
-
-        let product;
-        if (mongoose.Types.ObjectId.isValid(id)) {
-            product = await Product.findById(id);
-        } else {
-            product = await Product.findOne({ slug: id });
-        }
-
-        if (!product) {
-            return res.status(404).json({
-                success: false,
-                error: 'Product not found'
-            });
-        }
-
-        // Update all fields except slug (which is auto-generated)
-        Object.keys(updateData).forEach(key => {
-            if (key !== 'slug') {
-                product[key] = updateData[key];
-            }
-        });
-
-        await product.save();
-        await product.populate('category', 'name slug');
-
-        res.status(200).json({
-            success: true,
-            data: product
-        });
-    } catch (error) {
-        res.status(400).json({
-            success: false,
-            error: error.message
-        });
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+    
+    let product;
+    if (mongoose.Types.ObjectId.isValid(id)) {
+      product = await Product.findById(id);
+    } else {
+      product = await Product.findOne({ slug: id });
     }
+    
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        error: 'Product not found'
+      });
+    }
+    
+    // Delete old image if new image is provided
+    if (updateData.image && product.image && updateData.image !== product.image) {
+      await deleteImageFromCloudinary(product.image);
+    }
+    
+    // Update all fields except slug (which is auto-generated)
+    Object.keys(updateData).forEach(key => {
+      if (key !== 'slug') {
+        product[key] = updateData[key];
+      }
+    });
+    
+    await product.save();
+    await product.populate('category', 'name slug');
+    
+    res.status(200).json({
+      success: true,
+      data: product
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message
+    });
+  }
 };
 
 // Toggle boolean fields
@@ -197,12 +203,12 @@ const toggleProductField = async (req, res) => {
         const { id } = req.params;
         const { field } = req.body;
 
-        const allowedFields = ['isNew', 'published', 'artistPick'];
+        const allowedFields = ['isNewProduct', 'published', 'artistPick'];
 
         if (!allowedFields.includes(field)) {
             return res.status(400).json({
                 success: false,
-                error: 'Invalid field. Allowed fields: isNew, published, artistPick'
+                error: 'Invalid field. Allowed fields: isNewProduct, published, artistPick'
             });
         }
 
@@ -239,33 +245,38 @@ const toggleProductField = async (req, res) => {
 
 // Delete product
 const deleteProduct = async (req, res) => {
-    try {
-        const { id } = req.params;
-
-        let product;
-        if (mongoose.Types.ObjectId.isValid(id)) {
-            product = await Product.findByIdAndDelete(id);
-        } else {
-            product = await Product.findOneAndDelete({ slug: id });
-        }
-
-        if (!product) {
-            return res.status(404).json({
-                success: false,
-                error: 'Product not found'
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            message: 'Product deleted successfully'
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            error: error.message
-        });
+  try {
+    const { id } = req.params;
+    
+    let product;
+    if (mongoose.Types.ObjectId.isValid(id)) {
+      product = await Product.findByIdAndDelete(id);
+    } else {
+      product = await Product.findOneAndDelete({ slug: id });
     }
+    
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        error: 'Product not found'
+      });
+    }
+    
+    // Delete associated image from Cloudinary
+    if (product.image) {
+      await deleteImageFromCloudinary(product.image);
+    }
+    
+    res.status(200).json({
+      success: true,
+      message: 'Product and associated image deleted successfully'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
 };
 
 module.exports = {

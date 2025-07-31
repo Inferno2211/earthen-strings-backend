@@ -107,12 +107,12 @@ Currently, no authentication is required for these endpoints.
 
 ### Delete Category
 - **Endpoint:** `DELETE /categories/delete/:id`
-- **Description:** Delete a category by ID or slug
+- **Description:** Delete a category by ID or slug (also deletes associated image from Cloudinary)
 - **Response:**
 ```json
 {
   "success": true,
-  "message": "Category deleted successfully"
+  "message": "Category and associated image deleted successfully"
 }
 ```
 
@@ -343,12 +343,433 @@ Currently, no authentication is required for these endpoints.
 
 ### Delete Product
 - **Endpoint:** `DELETE /products/delete/:id`
-- **Description:** Delete a product by ID or slug
+- **Description:** Delete a product by ID or slug (also deletes associated image from Cloudinary)
 - **Response:**
 ```json
 {
   "success": true,
-  "message": "Product deleted successfully"
+  "message": "Product and associated image deleted successfully"
+}
+```
+
+## Banners
+
+### Create Banner
+- **Endpoint:** `POST /banners/create`
+- **Description:** Create a new banner
+- **Body:**
+```json
+{
+  "name": "Summer Sale Banner",
+  "image": "https://example.com/banner.jpg",
+  "product": "64f1a2b3c4d5e6f7g8h9i0j2",
+  "active": true
+}
+```
+- **Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "64f1a2b3c4d5e6f7g8h9i0j3",
+    "name": "Summer Sale Banner",
+    "image": "https://example.com/banner.jpg",
+    "product": {
+      "_id": "64f1a2b3c4d5e6f7g8h9i0j2",
+      "name": "Ocean Wave String Art",
+      "slug": "ocean-wave-string-art",
+      "image": "https://example.com/product.jpg"
+    },
+    "active": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
+}
+```
+
+### Get All Banners
+- **Endpoint:** `GET /banners/getAll`
+- **Description:** Retrieve all banners with optional filtering and sorting
+- **Query Parameters:**
+  - `active`: 'true' or 'false' (filter by active status)
+  - `sort`: Field to sort by (default: 'createdAt')
+  - `order`: 'asc' or 'desc' (default: 'desc')
+- **Examples:**
+  - `GET /banners/getAll?active=true`
+  - `GET /banners/getAll?sort=name&order=asc`
+- **Response:**
+```json
+{
+  "success": true,
+  "count": 1,
+  "data": [
+    {
+      "_id": "64f1a2b3c4d5e6f7g8h9i0j3",
+      "name": "Summer Sale Banner",
+      "image": "https://example.com/banner.jpg",
+      "product": {
+        "_id": "64f1a2b3c4d5e6f7g8h9i0j2",
+        "name": "Ocean Wave String Art",
+        "slug": "ocean-wave-string-art",
+        "image": "https://example.com/product.jpg"
+      },
+      "active": true,
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    }
+  ]
+}
+```
+
+### Get Banner by ID
+- **Endpoint:** `GET /banners/getOne/:id`
+- **Description:** Retrieve a single banner by ID
+- **Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "64f1a2b3c4d5e6f7g8h9i0j3",
+    "name": "Summer Sale Banner",
+    "image": "https://example.com/banner.jpg",
+    "product": {
+      "_id": "64f1a2b3c4d5e6f7g8h9i0j2",
+      "name": "Ocean Wave String Art",
+      "slug": "ocean-wave-string-art",
+      "image": "https://example.com/product.jpg"
+    },
+    "active": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
+}
+```
+
+### Update Banner
+- **Endpoint:** `PUT /banners/update/:id`
+- **Description:** Update an existing banner
+- **Body:** Same as create
+- **Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "64f1a2b3c4d5e6f7g8h9i0j3",
+    "name": "Updated Summer Sale Banner",
+    "image": "https://example.com/updated-banner.jpg",
+    "product": {
+      "_id": "64f1a2b3c4d5e6f7g8h9i0j2",
+      "name": "Ocean Wave String Art",
+      "slug": "ocean-wave-string-art",
+      "image": "https://example.com/product.jpg"
+    },
+    "active": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
+}
+```
+
+### Toggle Banner Active Status
+- **Endpoint:** `PATCH /banners/toggle/:id`
+- **Description:** Toggle banner active status
+- **Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "64f1a2b3c4d5e6f7g8h9i0j3",
+    "name": "Summer Sale Banner",
+    "image": "https://example.com/banner.jpg",
+    "product": {
+      "_id": "64f1a2b3c4d5e6f7g8h9i0j2",
+      "name": "Ocean Wave String Art",
+      "slug": "ocean-wave-string-art",
+      "image": "https://example.com/product.jpg"
+    },
+    "active": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
+}
+```
+
+### Delete Banner
+- **Endpoint:** `DELETE /banners/delete/:id`
+- **Description:** Delete a banner by ID (also deletes associated image from Cloudinary)
+- **Response:**
+```json
+{
+  "success": true,
+  "message": "Banner and associated image deleted successfully"
+}
+```
+
+## Instagram Posts
+
+### Create Instagram Post
+- **Endpoint:** `POST /instagram-posts/create`
+- **Description:** Create a new Instagram post
+- **Body:**
+```json
+{
+  "postName": "New String Art Creation",
+  "image": "https://example.com/instagram-post.jpg",
+  "postUrl": "https://instagram.com/p/ABC123",
+  "active": true
+}
+```
+- **Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "64f1a2b3c4d5e6f7g8h9i0j4",
+    "postName": "New String Art Creation",
+    "image": "https://example.com/instagram-post.jpg",
+    "postUrl": "https://instagram.com/p/ABC123",
+    "active": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
+}
+```
+
+### Get All Instagram Posts
+- **Endpoint:** `GET /instagram-posts/getAll`
+- **Description:** Retrieve all Instagram posts with optional filtering and sorting
+- **Query Parameters:**
+  - `active`: 'true' or 'false' (filter by active status)
+  - `sort`: Field to sort by (default: 'createdAt')
+  - `order`: 'asc' or 'desc' (default: 'desc')
+- **Examples:**
+  - `GET /instagram-posts/getAll?active=true`
+  - `GET /instagram-posts/getAll?sort=postName&order=asc`
+- **Response:**
+```json
+{
+  "success": true,
+  "count": 1,
+  "data": [
+    {
+      "_id": "64f1a2b3c4d5e6f7g8h9i0j4",
+      "postName": "New String Art Creation",
+      "image": "https://example.com/instagram-post.jpg",
+      "postUrl": "https://instagram.com/p/ABC123",
+      "active": true,
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    }
+  ]
+}
+```
+
+### Get Instagram Post by ID
+- **Endpoint:** `GET /instagram-posts/getOne/:id`
+- **Description:** Retrieve a single Instagram post by ID
+- **Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "64f1a2b3c4d5e6f7g8h9i0j4",
+    "postName": "New String Art Creation",
+    "image": "https://example.com/instagram-post.jpg",
+    "postUrl": "https://instagram.com/p/ABC123",
+    "active": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
+}
+```
+
+### Update Instagram Post
+- **Endpoint:** `PUT /instagram-posts/update/:id`
+- **Description:** Update an existing Instagram post
+- **Body:** Same as create
+- **Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "64f1a2b3c4d5e6f7g8h9i0j4",
+    "postName": "Updated String Art Creation",
+    "image": "https://example.com/updated-instagram-post.jpg",
+    "postUrl": "https://instagram.com/p/XYZ789",
+    "active": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
+}
+```
+
+### Toggle Instagram Post Active Status
+- **Endpoint:** `PATCH /instagram-posts/toggle/:id`
+- **Description:** Toggle Instagram post active status
+- **Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "64f1a2b3c4d5e6f7g8h9i0j4",
+    "postName": "New String Art Creation",
+    "image": "https://example.com/instagram-post.jpg",
+    "postUrl": "https://instagram.com/p/ABC123",
+    "active": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
+}
+```
+
+### Delete Instagram Post
+- **Endpoint:** `DELETE /instagram-posts/delete/:id`
+- **Description:** Delete an Instagram post by ID (also deletes associated image from Cloudinary)
+- **Response:**
+```json
+{
+  "success": true,
+  "message": "Instagram post and associated image deleted successfully"
+}
+```
+
+## File Uploads
+
+### Upload Image
+- **Endpoint:** `POST /upload/image`
+- **Description:** Upload an image to Cloudinary
+- **Content-Type:** `multipart/form-data`
+- **Body:**
+  - `file`: Image file (jpg, jpeg, png, gif, webp)
+  - `folder`: (optional) Custom folder name
+- **Response:**
+```json
+{
+  "success": true,
+  "message": "Image uploaded successfully",
+  "data": {
+    "public_id": "earthen-strings/images/abc123",
+    "url": "https://res.cloudinary.com/your-cloud/image/upload/v1234567890/earthen-strings/images/abc123.jpg",
+    "width": 1920,
+    "height": 1080,
+    "format": "jpg",
+    "size": 245760
+  }
+}
+```
+
+### Upload Video
+- **Endpoint:** `POST /upload/video`
+- **Description:** Upload a video to Cloudinary
+- **Content-Type:** `multipart/form-data`
+- **Body:**
+  - `file`: Video file (mp4, avi, mov, wmv, flv, webm)
+  - `folder`: (optional) Custom folder name
+- **Response:**
+```json
+{
+  "success": true,
+  "message": "Video uploaded successfully",
+  "data": {
+    "public_id": "earthen-strings/videos/abc123",
+    "url": "https://res.cloudinary.com/your-cloud/video/upload/v1234567890/earthen-strings/videos/abc123.mp4",
+    "width": 1920,
+    "height": 1080,
+    "format": "mp4",
+    "size": 5242880,
+    "duration": 30.5
+  }
+}
+```
+
+### Upload Document
+- **Endpoint:** `POST /upload/document`
+- **Description:** Upload a document to Cloudinary
+- **Content-Type:** `multipart/form-data`
+- **Body:**
+  - `file`: Document file (pdf, doc, docx, txt, rtf)
+  - `folder`: (optional) Custom folder name
+- **Response:**
+```json
+{
+  "success": true,
+  "message": "Document uploaded successfully",
+  "data": {
+    "public_id": "earthen-strings/documents/abc123",
+    "url": "https://res.cloudinary.com/your-cloud/raw/upload/v1234567890/earthen-strings/documents/abc123.pdf",
+    "format": "pdf",
+    "size": 1024000
+  }
+}
+```
+
+### Upload Any File
+- **Endpoint:** `POST /upload/file`
+- **Description:** Upload any file type to Cloudinary (auto-detect)
+- **Content-Type:** `multipart/form-data`
+- **Body:**
+  - `file`: Any file type
+  - `folder`: (optional) Custom folder name
+- **Response:**
+```json
+{
+  "success": true,
+  "message": "File uploaded successfully",
+  "data": {
+    "public_id": "earthen-strings/files/abc123",
+    "url": "https://res.cloudinary.com/your-cloud/auto/upload/v1234567890/earthen-strings/files/abc123.zip",
+    "width": null,
+    "height": null,
+    "format": "zip",
+    "size": 2048000,
+    "resource_type": "raw"
+  }
+}
+```
+
+### Delete Uploaded File
+- **Endpoint:** `DELETE /upload/delete`
+- **Description:** Delete a file from Cloudinary
+- **Body:**
+```json
+{
+  "publicId": "earthen-strings/images/abc123",
+  "resourceType": "image"
+}
+```
+- **Response:**
+```json
+{
+  "success": true,
+  "message": "File deleted successfully",
+  "data": {
+    "result": "ok"
+  }
+}
+```
+
+### Get File Info
+- **Endpoint:** `GET /upload/info`
+- **Description:** Get information about an uploaded file
+- **Query Parameters:**
+  - `publicId`: Cloudinary public ID
+  - `resourceType`: Resource type (image, video, raw)
+- **Example:** `GET /upload/info?publicId=earthen-strings/images/abc123&resourceType=image`
+- **Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "public_id": "earthen-strings/images/abc123",
+    "format": "jpg",
+    "version": 1234567890,
+    "url": "https://res.cloudinary.com/your-cloud/image/upload/v1234567890/earthen-strings/images/abc123.jpg",
+    "secure_url": "https://res.cloudinary.com/your-cloud/image/upload/v1234567890/earthen-strings/images/abc123.jpg",
+    "width": 1920,
+    "height": 1080,
+    "bytes": 245760,
+    "created_at": "2024-01-01T00:00:00.000Z"
+  }
 }
 ```
 
@@ -404,5 +825,21 @@ Currently, no authentication is required for these endpoints.
   - `height` (Number, min: 0)
   - `material` (String)
   - `color` (String)
+- `createdAt` (Date, auto-generated)
+- `updatedAt` (Date, auto-generated)
+
+### Banner Schema
+- `name` (String, required)
+- `image` (String, required) - URL to image
+- `product` (ObjectId, ref: Product, required)
+- `active` (Boolean, default: false)
+- `createdAt` (Date, auto-generated)
+- `updatedAt` (Date, auto-generated)
+
+### Instagram Post Schema
+- `postName` (String, required)
+- `image` (String, required) - URL to image
+- `postUrl` (String, required) - URL to Instagram post
+- `active` (Boolean, default: false)
 - `createdAt` (Date, auto-generated)
 - `updatedAt` (Date, auto-generated) 

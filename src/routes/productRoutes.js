@@ -21,7 +21,7 @@ router.get('/getOne/:id', getProduct);
 // Update product
 router.put('/update/:id', updateProduct);
 
-// Toggle boolean fields (isNew, published, artistPick)
+// Toggle boolean fields (isNewProduct, published, artistPick)
 router.patch('/toggle/:id', toggleProductField);
 
 // Delete product

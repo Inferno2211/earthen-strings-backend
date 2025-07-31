@@ -453,6 +453,478 @@
 					}
 				}
 			]
+		},
+		{
+			"name": "Banners",
+			"item": [
+				{
+					"name": "Create Banner",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Summer Sale Banner\",\n  \"image\": \"https://example.com/banner.jpg\",\n  \"product\": \"{{productId}}\",\n  \"active\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/banners/create",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"banners",
+								"create"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get All Banners",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/banners/getAll?active=true&sort=createdAt&order=desc",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"banners",
+								"getAll"
+							],
+							"query": [
+								{
+									"key": "active",
+									"value": "true"
+								},
+								{
+									"key": "sort",
+									"value": "createdAt"
+								},
+								{
+									"key": "order",
+									"value": "desc"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Banner by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/banners/getOne/{{bannerId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"banners",
+								"getOne",
+								"{{bannerId}}"
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Banner",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated Summer Sale Banner\",\n  \"image\": \"https://example.com/updated-banner.jpg\",\n  \"product\": \"{{productId}}\",\n  \"active\": false\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/banners/update/{{bannerId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"banners",
+								"update",
+								"{{bannerId}}"
+							]
+						}
+					}
+				},
+				{
+					"name": "Toggle Banner Active",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/banners/toggle/{{bannerId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"banners",
+								"toggle",
+								"{{bannerId}}"
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete Banner",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/banners/delete/{{bannerId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"banners",
+								"delete",
+								"{{bannerId}}"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Instagram Posts",
+			"item": [
+				{
+					"name": "Create Instagram Post",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"postName\": \"New String Art Creation\",\n  \"image\": \"https://example.com/instagram-post.jpg\",\n  \"postUrl\": \"https://instagram.com/p/ABC123\",\n  \"active\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/instagram-posts/create",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"instagram-posts",
+								"create"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get All Instagram Posts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/instagram-posts/getAll?active=true&sort=createdAt&order=desc",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"instagram-posts",
+								"getAll"
+							],
+							"query": [
+								{
+									"key": "active",
+									"value": "true"
+								},
+								{
+									"key": "sort",
+									"value": "createdAt"
+								},
+								{
+									"key": "order",
+									"value": "desc"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Instagram Post by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/instagram-posts/getOne/{{instagramPostId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"instagram-posts",
+								"getOne",
+								"{{instagramPostId}}"
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Instagram Post",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"postName\": \"Updated String Art Creation\",\n  \"image\": \"https://example.com/updated-instagram-post.jpg\",\n  \"postUrl\": \"https://instagram.com/p/XYZ789\",\n  \"active\": false\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/instagram-posts/update/{{instagramPostId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"instagram-posts",
+								"update",
+								"{{instagramPostId}}"
+							]
+						}
+					}
+				},
+				{
+					"name": "Toggle Instagram Post Active",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/instagram-posts/toggle/{{instagramPostId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"instagram-posts",
+								"toggle",
+								"{{instagramPostId}}"
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete Instagram Post",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/instagram-posts/delete/{{instagramPostId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"instagram-posts",
+								"delete",
+								"{{instagramPostId}}"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "File Uploads",
+			"item": [
+				{
+					"name": "Upload Image",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "folder",
+									"value": "earthen-strings/images",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/upload/image",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"upload",
+								"image"
+							]
+						}
+					}
+				},
+				{
+					"name": "Upload Video",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "folder",
+									"value": "earthen-strings/videos",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/upload/video",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"upload",
+								"video"
+							]
+						}
+					}
+				},
+				{
+					"name": "Upload Document",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "folder",
+									"value": "earthen-strings/documents",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/upload/document",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"upload",
+								"document"
+							]
+						}
+					}
+				},
+				{
+					"name": "Upload Any File",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "folder",
+									"value": "earthen-strings/files",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/upload/file",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"upload",
+								"file"
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete Uploaded File",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"publicId\": \"earthen-strings/images/abc123\",\n  \"resourceType\": \"image\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/upload/delete",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"upload",
+								"delete"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get File Info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/upload/info?publicId=earthen-strings/images/abc123&resourceType=image",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"upload",
+								"info"
+							],
+							"query": [
+								{
+									"key": "publicId",
+									"value": "earthen-strings/images/abc123"
+								},
+								{
+									"key": "resourceType",
+									"value": "image"
+								}
+							]
+						}
+					}
+				}
+			]
 		}
 	],
 	"event": [
@@ -488,6 +960,16 @@
 		},
 		{
 			"key": "productId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "bannerId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "instagramPostId",
 			"value": "",
 			"type": "string"
 		}
