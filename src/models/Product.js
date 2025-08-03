@@ -7,11 +7,11 @@ const productSchema = new mongoose.Schema({
         required: [true, 'Product name is required'],
         trim: true
     },
-    image: {
+    images: [{
         type: String,
         required: [true, 'Product image URL is required'],
         trim: true
-    },
+    }],
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',

@@ -5,7 +5,7 @@ const Product = require('../models/Product');
 const getWishlist = async (req, res) => {
   try {
     const user = await User.findById(req.user.userId)
-      .populate('wishlist', 'name image price slug description category');
+      .populate('wishlist', 'name images price slug description category');
 
     if (!user) {
       return res.status(404).json({
@@ -67,7 +67,7 @@ const addToWishlist = async (req, res) => {
     await user.addToWishlist(productId);
 
     // Populate wishlist items
-    await user.populate('wishlist', 'name image price slug description category');
+    await user.populate('wishlist', 'name images price slug description category');
 
     res.status(200).json({
       success: true,
@@ -107,7 +107,7 @@ const removeFromWishlist = async (req, res) => {
     await user.removeFromWishlist(productId);
 
     // Populate wishlist items
-    await user.populate('wishlist', 'name image price slug description category');
+    await user.populate('wishlist', 'name images price slug description category');
 
     res.status(200).json({
       success: true,

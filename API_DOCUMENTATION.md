@@ -125,7 +125,11 @@ Currently, no authentication is required for these endpoints.
 ```json
 {
   "name": "Ocean Wave String Art",
-  "image": "https://example.com/product.jpg",
+  "images": [
+    "https://example.com/product1.jpg",
+    "https://example.com/product2.jpg",
+    "https://example.com/product3.jpg"
+  ],
   "category": "64f1a2b3c4d5e6f7g8h9i0j1",
   "price": 150.00,
   "description": "Beautiful ocean wave string art",
@@ -179,15 +183,23 @@ Currently, no authentication is required for these endpoints.
 - **Query Parameters:**
   - `sort`: Field to sort by (default: 'createdAt')
   - `order`: 'asc' or 'desc' (default: 'desc')
+  - `search`: Text search in name and description
   - `isNew`: 'true' or 'false' (filter by new products)
   - `published`: 'true' or 'false' (filter by published status)
   - `artistPick`: 'true' or 'false' (filter by artist pick)
-  - `category`: Category ID or slug (filter by category)
+  - `category`: Category ID or slug (filter by single category)
+  - `categories`: Comma-separated category IDs (filter by multiple categories)
+  - `materials`: Comma-separated materials (filter by materials)
+  - `colors`: Comma-separated colors (filter by colors)
+  - `minPrice`: Minimum price (number)
+  - `maxPrice`: Maximum price (number)
   - `page`: Page number (default: 1)
   - `limit`: Items per page (default: 10)
 - **Examples:**
   - `GET /products/getAll?published=true&isNew=true`
   - `GET /products/getAll?category=string-art&sort=price&order=asc`
+  - `GET /products/getAll?search=ocean&materials=Wood,Canvas&minPrice=100&maxPrice=500`
+  - `GET /products/getAll?categories=64f1a2b3c4d5e6f7g8h9i0j1,64f1a2b3c4d5e6f7g8h9i0j2&colors=Blue,Red`
   - `GET /products/getAll?page=2&limit=5`
 - **Response:**
 ```json
@@ -811,7 +823,7 @@ Currently, no authentication is required for these endpoints.
 
 ### Product Schema
 - `name` (String, required)
-- `image` (String, required) - URL to image
+- `images` (Array of Strings, required) - Array of image URLs
 - `category` (ObjectId, ref: Category, required)
 - `slug` (String, unique, auto-generated from name)
 - `price` (Number, required, min: 0)

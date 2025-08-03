@@ -160,7 +160,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Ocean Wave String Art\",\n  \"image\": \"https://example.com/product.jpg\",\n  \"category\": \"{{categoryId}}\",\n  \"price\": 150.00,\n  \"description\": \"Beautiful ocean wave string art\",\n  \"isNew\": true,\n  \"published\": true,\n  \"artistPick\": false,\n  \"details\": {\n    \"length\": 24,\n    \"width\": 12,\n    \"height\": 2,\n    \"material\": \"Wood\",\n    \"color\": \"Blue and White\"\n  }\n}"
+							  "raw": "{\n  \"name\": \"Ocean Wave String Art\",\n  \"images\": [\n    \"https://example.com/product1.jpg\",\n    \"https://example.com/product2.jpg\",\n    \"https://example.com/product3.jpg\"\n  ],\n  \"category\": \"{{categoryId}}\",\n  \"price\": 150.00,\n  \"description\": \"Beautiful ocean wave string art\",\n  \"isNew\": true,\n  \"published\": true,\n  \"artistPick\": false,\n  \"details\": {\n    \"length\": 24,\n    \"width\": 12,\n    \"height\": 2,\n    \"material\": \"Wood\",\n    \"color\": \"Blue and White\"\n  }\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/products/create",
@@ -338,7 +338,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Updated Ocean Wave String Art\",\n  \"image\": \"https://example.com/updated-product.jpg\",\n  \"category\": \"{{categoryId}}\",\n  \"price\": 175.00,\n  \"description\": \"Updated description\",\n  \"isNew\": false,\n  \"published\": true,\n  \"artistPick\": true,\n  \"details\": {\n    \"length\": 24,\n    \"width\": 12,\n    \"height\": 2,\n    \"material\": \"Wood\",\n    \"color\": \"Blue and White\"\n  }\n}"
+							"raw": "{\n  \"name\": \"Updated Ocean Wave String Art\",\n  \"images\": [\n    \"https://example.com/updated-product1.jpg\",\n    \"https://example.com/updated-product2.jpg\"\n  ],\n  \"category\": \"{{categoryId}}\",\n  \"price\": 175.00,\n  \"description\": \"Updated description\",\n  \"isNew\": false,\n  \"published\": true,\n  \"artistPick\": true,\n  \"details\": {\n    \"length\": 24,\n    \"width\": 12,\n    \"height\": 2,\n    \"material\": \"Wood\",\n    \"color\": \"Blue and White\"\n  }\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/products/update/{{productId}}",

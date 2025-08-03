@@ -7,7 +7,7 @@ const createProduct = async (req, res) => {
     try {
         const {
             name,
-            image,
+            images,
             category,
             price,
             description,
@@ -19,7 +19,7 @@ const createProduct = async (req, res) => {
 
         const product = new Product({
             name,
-            image,
+            images,
             category,
             price,
             description,
@@ -80,6 +80,7 @@ const getProduct = async (req, res) => {
 // Fetch all products with filtering and sorting
 const getAllProducts = async (req, res) => {
     try {
+        // console.log('Received query params:', req.query);
         const {
             sort = 'createdAt',
             order = 'desc',
@@ -87,6 +88,12 @@ const getAllProducts = async (req, res) => {
             published,
             artistPick,
             category,
+            categories,
+            materials,
+            colors,
+            minPrice,
+            maxPrice,
+            search,
             page = 1,
             limit = 10
         } = req.query;
@@ -94,6 +101,15 @@ const getAllProducts = async (req, res) => {
         // Build filter object
         const filter = {};
 
+        // Text search
+        if (search) {
+            filter.$or = [
+                { name: { $regex: search, $options: 'i' } },
+                { description: { $regex: search, $options: 'i' } }
+            ];
+        }
+
+        // Boolean filters
         if (isNew !== undefined) {
             filter.isNew = isNew === 'true';
         }
@@ -106,7 +122,11 @@ const getAllProducts = async (req, res) => {
             filter.artistPick = artistPick === 'true';
         }
 
-        if (category) {
+        // Category filters
+        if (categories) {
+            const categoryIds = categories.split(',').map(id => id.trim());
+            filter.category = { $in: categoryIds };
+        } else if (category) {
             if (mongoose.Types.ObjectId.isValid(category)) {
                 filter.category = category;
             } else {
@@ -119,9 +139,31 @@ const getAllProducts = async (req, res) => {
             }
         }
 
+        // Price range filter
+        if (minPrice || maxPrice) {
+            filter.price = {};
+            if (minPrice) filter.price.$gte = parseFloat(minPrice);
+            if (maxPrice) filter.price.$lte = parseFloat(maxPrice);
+        }
+
+        // Material and color filters
+        if (materials || colors) {
+            filter.details = {};
+            if (materials) {
+                const materialList = materials.split(',').map(m => m.trim());
+                filter.details.material = { $in: materialList };
+            }
+            if (colors) {
+                const colorList = colors.split(',').map(c => c.trim());
+                filter.details.color = { $in: colorList };
+            }
+        }
+
         // Build sort object
         const sortOptions = {};
         sortOptions[sort] = order === 'desc' ? -1 : 1;
+
+        //console.log('Final filter object:', JSON.stringify(filter, null, 2));
 
         // Pagination
         const skip = (parseInt(page) - 1) * parseInt(limit);
@@ -170,9 +212,13 @@ const updateProduct = async (req, res) => {
       });
     }
     
-    // Delete old image if new image is provided
-    if (updateData.image && product.image && updateData.image !== product.image) {
-      await deleteImageFromCloudinary(product.image);
+    // Delete old images if new images are provided
+    if (updateData.images && product.images && JSON.stringify(updateData.images) !== JSON.stringify(product.images)) {
+      // Delete old images that are not in the new images array
+      const imagesToDelete = product.images.filter(img => !updateData.images.includes(img));
+      for (const imageUrl of imagesToDelete) {
+        await deleteImageFromCloudinary(imageUrl);
+      }
     }
     
     // Update all fields except slug (which is auto-generated)
@@ -262,9 +308,11 @@ const deleteProduct = async (req, res) => {
       });
     }
     
-    // Delete associated image from Cloudinary
-    if (product.image) {
-      await deleteImageFromCloudinary(product.image);
+    // Delete associated images from Cloudinary
+    if (product.images && product.images.length > 0) {
+      for (const imageUrl of product.images) {
+        await deleteImageFromCloudinary(imageUrl);
+      }
     }
     
     res.status(200).json({

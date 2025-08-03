@@ -11,7 +11,7 @@ const createOrder = async (req, res) => {
 
     // Get user's cart
     const cart = await Cart.findOne({ user: req.user.userId })
-      .populate('items.product', 'name price');
+      .populate('items.product', 'name price images');
 
     if (!cart || cart.items.length === 0) {
       return res.status(400).json({
@@ -80,7 +80,7 @@ const getUserOrders = async (req, res) => {
       sort: { createdAt: -1 },
       populate: {
         path: 'items.productId',
-        select: 'name image slug'
+        select: 'name images slug'
       }
     };
 
@@ -106,7 +106,7 @@ const getOrderById = async (req, res) => {
     const order = await Order.findOne({
       _id: orderId,
       userId: req.user.userId
-    }).populate('items.productId', 'name image slug description');
+    }).populate('items.productId', 'name images slug description');
 
     if (!order) {
       return res.status(404).json({
@@ -259,7 +259,7 @@ const getAllOrders = async (req, res) => {
         },
         {
           path: 'items.productId',
-          select: 'name image slug'
+          select: 'name images slug'
         }
       ]
     };
@@ -285,7 +285,7 @@ const getOrderByIdAdmin = async (req, res) => {
 
     const order = await Order.findById(orderId)
       .populate('userId', 'firstName lastName email phone')
-      .populate('items.productId', 'name image slug description');
+      .populate('items.productId', 'name images slug description');
 
     if (!order) {
       return res.status(404).json({

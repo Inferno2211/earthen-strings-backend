@@ -5,7 +5,7 @@ const Product = require('../models/Product');
 const getCart = async (req, res) => {
   try {
     const cart = await Cart.findOne({ user: req.user.userId })
-      .populate('items.product', 'name image price slug description');
+      .populate('items.product', 'name images price slug description');
 
     if (!cart) {
       return res.status(404).json({
@@ -58,7 +58,7 @@ const addToCart = async (req, res) => {
     await cart.addItem(productId, quantity, product.price);
 
     // Populate product details
-    await cart.populate('items.product', 'name image price slug description');
+    await cart.populate('items.product', 'name images price slug description');
 
     res.status(200).json({
       success: true,
@@ -98,7 +98,7 @@ const updateCartItem = async (req, res) => {
     await cart.updateItemQuantity(productId, quantity);
 
     // Populate product details
-    await cart.populate('items.product', 'name image price slug description');
+    await cart.populate('items.product', 'name images price slug description');
 
     res.status(200).json({
       success: true,
@@ -130,7 +130,7 @@ const removeFromCart = async (req, res) => {
     await cart.removeItem(productId);
 
     // Populate product details
-    await cart.populate('items.product', 'name image price slug description');
+    await cart.populate('items.product', 'name images price slug description');
 
     res.status(200).json({
       success: true,
