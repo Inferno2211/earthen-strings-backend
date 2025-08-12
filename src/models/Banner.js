@@ -19,6 +19,12 @@ const bannerSchema = new mongoose.Schema({
   active: {
     type: Boolean,
     default: false
+  },
+  viewType: {
+    type: String,
+    enum: ['mobile', 'desktop', 'both'],
+    default: 'both',
+    required: [true, 'Banner view type is required']
   }
 }, {
   timestamps: true

@@ -14,7 +14,7 @@ connectDB();
 // Middleware
 app.use(cors(
     {
-        origin: ['http://localhost:5173', 'https://earthenstrings.com', 'https://admin.earthenstrings.com'],
+        origin: ['http://localhost:5173', 'http://localhost:5174', 'https://earthenstrings.com', 'https://admin.earthenstrings.com'],
         credentials: true
     }
 ));

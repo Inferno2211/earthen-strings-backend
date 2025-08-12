@@ -5,13 +5,14 @@ const { deleteImageFromCloudinary } = require('../utils/cloudinaryUtils');
 // Create banner
 const createBanner = async (req, res) => {
   try {
-    const { name, image, product, active } = req.body;
+    const { name, image, product, active, viewType } = req.body;
     
     const banner = new Banner({
       name,
       image,
       product,
-      active: active || false
+      active: active || false,
+      viewType: viewType || 'both'
     });
     
     await banner.save();
@@ -34,13 +35,21 @@ const createBanner = async (req, res) => {
 // Fetch all banners
 const getAllBanners = async (req, res) => {
   try {
-    const { active, sort = 'createdAt', order = 'desc' } = req.query;
+    const { active, viewType, sort = 'createdAt', order = 'desc' } = req.query;
     
     // Build filter object
     const filter = {};
     
     if (active !== undefined) {
       filter.active = active === 'true';
+    }
+    
+    if (viewType) {
+      // If viewType is specified, include banners that match or are 'both'
+      filter.$or = [
+        { viewType: viewType },
+        { viewType: 'both' }
+      ];
     }
     
     // Build sort object
@@ -94,7 +103,7 @@ const getBanner = async (req, res) => {
 const updateBanner = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, image, product, active } = req.body;
+    const { name, image, product, active, viewType } = req.body;
     
     const banner = await Banner.findById(id);
     
@@ -114,6 +123,7 @@ const updateBanner = async (req, res) => {
     if (image) banner.image = image;
     if (product) banner.product = product;
     if (active !== undefined) banner.active = active;
+    if (viewType) banner.viewType = viewType;
     
     await banner.save();
     await banner.populate('product', 'name slug image');
