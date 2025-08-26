@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Category = require('../models/Category');
+const Product = require('../models/Product');
 const { deleteImageFromCloudinary } = require('../utils/cloudinaryUtils');
 
 // Create category
@@ -160,10 +161,55 @@ const deleteCategory = async (req, res) => {
     }
 };
 
+// Get products by category group
+const getCategorizedProducts = async (req, res) => {
+    try {
+        const { category } = req.params;
+        
+        // Category mapping
+        const categoryMap = {
+            'tableware': ['trinket-boxes', 'cutlery-boxes', 'calendars', 'serving-trays', 'bowls', 'plates', 'tea-sets'],
+            'accessories': ['magnets', 'coasters', 'keychains', 'bookmarks', 'badges', 'pins'],
+            'wall-decor': ['wallplates', 'wall-plates', 'wall-decor', 'paintings', 'frames', 'wall-hangings', 'art-pieces']
+        };
+
+        let categoryNames = categoryMap[category] || [category];
+        
+        // Find matching categories
+        const categories = await Category.find({
+            $or: [
+                { slug: { $in: categoryNames } },
+                { name: { $regex: new RegExp(categoryNames.join('|'), 'i') } }
+            ]
+        });
+
+        const categoryIds = categories.map(cat => cat._id);
+        
+        // Get products in these categories
+        const products = await Product.find({ 
+            category: { $in: categoryIds },
+            published: true 
+        }).populate('category').sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            count: products.length,
+            type: category,
+            data: products
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
 module.exports = {
     createCategory,
     getCategory,
     getAllCategories,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    getCategorizedProducts
 }; 
