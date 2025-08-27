@@ -35,7 +35,7 @@ const createBanner = async (req, res) => {
 // Fetch all banners
 const getAllBanners = async (req, res) => {
   try {
-    const { active, viewType, sort = 'createdAt', order = 'desc' } = req.query;
+    const { active, viewType, sort = 'updatedAt', order = 'desc' } = req.query;
     
     // Build filter object
     const filter = {};
