@@ -23,7 +23,7 @@ const createProduct = async (req, res) => {
             category,
             price,
             description,
-            isNew: isNew || false,
+            isNewProduct: isNew || false,
             published: published || false,
             artistPick: artistPick || false,
             details
@@ -111,7 +111,7 @@ const getAllProducts = async (req, res) => {
 
         // Boolean filters
         if (isNew !== undefined) {
-            filter.isNew = isNew === 'true';
+            filter.isNewProduct = isNew === 'true';
         }
 
         if (published !== undefined) {
@@ -198,11 +198,62 @@ const updateProduct = async (req, res) => {
     const { id } = req.params;
     const updateData = req.body;
     
+    // Find the existing product first to get current images
+    let existingProduct;
+    if (mongoose.Types.ObjectId.isValid(id)) {
+      existingProduct = await Product.findById(id);
+    } else {
+      existingProduct = await Product.findOne({ slug: id });
+    }
+    
+    if (!existingProduct) {
+      return res.status(404).json({
+        success: false,
+        error: 'Product not found'
+      });
+    }
+    
+    // Delete old images if new images are provided
+    if (updateData.images && existingProduct.images && JSON.stringify(updateData.images) !== JSON.stringify(existingProduct.images)) {
+      // Delete old images that are not in the new images array
+      const imagesToDelete = existingProduct.images.filter(img => !updateData.images.includes(img));
+      for (const imageUrl of imagesToDelete) {
+        await deleteImageFromCloudinary(imageUrl);
+      }
+    }
+    
+    // Prepare update data, excluding slug to let it be auto-generated if name changes
+    const updateFields = { ...updateData };
+    delete updateFields.slug; // Remove slug from update data
+    
+    // Map isNew to isNewProduct if present
+    if (updateFields.hasOwnProperty('isNew')) {
+      updateFields.isNewProduct = updateFields.isNew;
+      delete updateFields.isNew;
+    }
+    
+    // Use findByIdAndUpdate for more reliable updates
     let product;
     if (mongoose.Types.ObjectId.isValid(id)) {
-      product = await Product.findById(id);
+      product = await Product.findByIdAndUpdate(
+        id,
+        updateFields,
+        { 
+          new: true, 
+          runValidators: true,
+          setDefaultsOnInsert: true
+        }
+      );
     } else {
-      product = await Product.findOne({ slug: id });
+      product = await Product.findOneAndUpdate(
+        { slug: id },
+        updateFields,
+        { 
+          new: true, 
+          runValidators: true,
+          setDefaultsOnInsert: true
+        }
+      );
     }
     
     if (!product) {
@@ -212,23 +263,6 @@ const updateProduct = async (req, res) => {
       });
     }
     
-    // Delete old images if new images are provided
-    if (updateData.images && product.images && JSON.stringify(updateData.images) !== JSON.stringify(product.images)) {
-      // Delete old images that are not in the new images array
-      const imagesToDelete = product.images.filter(img => !updateData.images.includes(img));
-      for (const imageUrl of imagesToDelete) {
-        await deleteImageFromCloudinary(imageUrl);
-      }
-    }
-    
-    // Update all fields except slug (which is auto-generated)
-    Object.keys(updateData).forEach(key => {
-      if (key !== 'slug') {
-        product[key] = updateData[key];
-      }
-    });
-    
-    await product.save();
     await product.populate('category', 'name slug');
     
     res.status(200).json({

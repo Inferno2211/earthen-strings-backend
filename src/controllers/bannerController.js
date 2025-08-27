@@ -5,20 +5,20 @@ const { deleteImageFromCloudinary } = require('../utils/cloudinaryUtils');
 // Create banner
 const createBanner = async (req, res) => {
   try {
-    const { name, image, product, active, viewType } = req.body;
+    const { name, image, category, active, viewType } = req.body;
     
     const banner = new Banner({
       name,
       image,
-      product,
+      category,
       active: active || false,
       viewType: viewType || 'both'
     });
     
     await banner.save();
     
-    // Populate product info
-    await banner.populate('product', 'name slug image');
+    // Populate category info
+    await banner.populate('category', 'name slug image');
     
     res.status(201).json({
       success: true,
@@ -57,7 +57,7 @@ const getAllBanners = async (req, res) => {
     sortOptions[sort] = order === 'desc' ? -1 : 1;
     
     const banners = await Banner.find(filter)
-      .populate('product', 'name slug image')
+      .populate('category', 'name slug image')
       .sort(sortOptions);
     
     res.status(200).json({
@@ -78,7 +78,7 @@ const getBanner = async (req, res) => {
   try {
     const { id } = req.params;
     
-    const banner = await Banner.findById(id).populate('product', 'name slug image');
+    const banner = await Banner.findById(id).populate('category', 'name slug image');
     
     if (!banner) {
       return res.status(404).json({
@@ -103,7 +103,7 @@ const getBanner = async (req, res) => {
 const updateBanner = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, image, product, active, viewType } = req.body;
+    const { name, image, category, active, viewType } = req.body;
     
     const banner = await Banner.findById(id);
     
@@ -121,12 +121,12 @@ const updateBanner = async (req, res) => {
     
     if (name) banner.name = name;
     if (image) banner.image = image;
-    if (product) banner.product = product;
+    if (category) banner.category = category;
     if (active !== undefined) banner.active = active;
     if (viewType) banner.viewType = viewType;
     
     await banner.save();
-    await banner.populate('product', 'name slug image');
+    await banner.populate('category', 'name slug image');
     
     res.status(200).json({
       success: true,
@@ -157,7 +157,7 @@ const toggleBannerActive = async (req, res) => {
     // Toggle the active status
     banner.active = !banner.active;
     await banner.save();
-    await banner.populate('product', 'name slug image');
+    await banner.populate('category', 'name slug image');
     
     res.status(200).json({
       success: true,

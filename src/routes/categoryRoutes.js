@@ -16,7 +16,7 @@ router.post('/create', createCategory);
 router.get('/getAll', getAllCategories);
 
 // Get products by category group (tableware, accessories, wall-decor, or specific category)
-router.get('/products/:category', getCategorizedProducts);
+router.get('/getByCategory/:category', getCategorizedProducts);
 
 // Get one category by ID or slug
 router.get('/getOne/:id', getCategory);

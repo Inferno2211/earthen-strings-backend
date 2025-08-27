@@ -168,12 +168,19 @@ const getCategorizedProducts = async (req, res) => {
         
         // Category mapping
         const categoryMap = {
-            'tableware': ['trinket-boxes', 'cutlery-boxes', 'calendars', 'serving-trays', 'bowls', 'plates', 'tea-sets'],
-            'accessories': ['magnets', 'coasters', 'keychains', 'bookmarks', 'badges', 'pins'],
-            'wall-decor': ['wallplates', 'wall-plates', 'wall-decor', 'paintings', 'frames', 'wall-hangings', 'art-pieces']
+            'tableware': ['trinket-boxes', 'cutlery-boxes', 'tissue-boxes', 'trays', 'coasters'],
+            'accessories': ['magnets', 'trinket-boxes', 'calendar', 'notebooks', 'tealight'],
+            'wall-decor': ['wallplates']
         };
 
         let categoryNames = categoryMap[category] || [category];
+
+        const exist = await Category.findOne({ slug: { $in: categoryNames } });
+        if(!exist)
+            return res.status(404).json({
+                success: false,
+                error: 'Category not found'
+            });
         
         // Find matching categories
         const categories = await Category.find({

@@ -11,10 +11,10 @@ const bannerSchema = new mongoose.Schema({
     required: [true, 'Banner image URL is required'],
     trim: true
   },
-  product: {
+  category: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Product',
-    required: [true, 'Banner product reference is required']
+    ref: 'Category',
+    required: [true, 'Banner category reference is required']
   },
   active: {
     type: Boolean,
