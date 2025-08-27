@@ -8,24 +8,36 @@ cloudinary.config({
 });
 
 // Upload image to Cloudinary
-const uploadImage = async (file, folder = 'earthen-strings/images') => {
+const uploadImage = async (file, folder = 'earthen-strings/images', options = {}) => {
     try {
+        const {
+            eager = undefined,
+            public_id = undefined,
+            overwrite = true,
+            resource_type = 'image',
+            allowed_formats = ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+            context = undefined,
+            use_filename = false,
+            unique_filename = true
+        } = options;
+
         const result = await cloudinary.uploader.upload(file, {
-            folder: folder,
-            resource_type: 'image',
-            allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
-            //   transformation: [
-            //     { quality: 'auto:good' },
-            //     { fetch_format: 'auto' },
-            //     { width: 1920, height: 1080, crop: 'limit' },
-            //     { flags: 'progressive' }
-            //   ]
+            folder,
+            resource_type,
+            allowed_formats,
+            eager,
+            public_id,
+            overwrite,
+            context,
+            use_filename,
+            unique_filename
         });
 
         return {
             success: true,
             public_id: result.public_id,
             url: result.secure_url,
+            eager: result.eager || [],
             width: result.width,
             height: result.height,
             format: result.format,
@@ -34,7 +46,7 @@ const uploadImage = async (file, folder = 'earthen-strings/images') => {
     } catch (error) {
         return {
             success: false,
-            error: error.message
+            error: error
         };
     }
 };
