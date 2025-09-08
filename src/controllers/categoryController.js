@@ -165,7 +165,7 @@ const deleteCategory = async (req, res) => {
 const getCategorizedProducts = async (req, res) => {
     try {
         const { category } = req.params;
-        
+
         // Category mapping
         const categoryMap = {
             'tableware': ['trinket-boxes', 'cutlery-boxes', 'tissue-boxes', 'trays', 'coasters'],
@@ -176,12 +176,12 @@ const getCategorizedProducts = async (req, res) => {
         let categoryNames = categoryMap[category] || [category];
 
         const exist = await Category.findOne({ slug: { $in: categoryNames } });
-        if(!exist)
+        if (!exist)
             return res.status(404).json({
                 success: false,
                 error: 'Category not found'
             });
-        
+
         // Find matching categories
         const categories = await Category.find({
             $or: [
@@ -190,18 +190,26 @@ const getCategorizedProducts = async (req, res) => {
             ]
         });
 
-        const categoryIds = categories.map(cat => cat._id);
-        
-        // Get products in these categories
-        const products = await Product.find({ 
-            category: { $in: categoryIds },
-            published: true 
-        }).populate('category').sort({ createdAt: -1 });
+
+        let products= [];
+
+        for (let c of categories) {
+            const categoryProducts = await Product.find({
+                category: c._id,
+                published: true
+            })
+                .sort({ createdAt: -1 });
+
+            products.push({
+                category: c.name,
+                products: categoryProducts
+            });
+        }
 
         res.status(200).json({
             success: true,
             count: products.length,
-            type: category,
+            // type: category,
             data: products
         });
     } catch (error) {
