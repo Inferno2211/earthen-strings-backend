@@ -111,7 +111,7 @@ const getAllProducts = async (req, res) => {
 
         // Boolean filters
         if (isNew !== undefined) {
-            filter.isNew = isNew === 'true';
+            filter.isNewProduct = isNew === 'true';
         }
 
         if (published !== undefined) {
@@ -194,53 +194,56 @@ const getAllProducts = async (req, res) => {
 
 // Update product
 const updateProduct = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const updateData = req.body;
-    
-    let product;
-    if (mongoose.Types.ObjectId.isValid(id)) {
-      product = await Product.findById(id);
-    } else {
-      product = await Product.findOne({ slug: id });
+    try {
+        const { id } = req.params;
+        const updateData = req.body;
+
+        let product;
+        if (mongoose.Types.ObjectId.isValid(id)) {
+            product = await Product.findById(id);
+        } else {
+            product = await Product.findOne({ slug: id });
+        }
+
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                error: 'Product not found'
+            });
+        }
+
+        // Delete old images if new images are provided
+        if (updateData.images && product.images && JSON.stringify(updateData.images) !== JSON.stringify(product.images)) {
+            // Delete old images that are not in the new images array
+            const imagesToDelete = product.images.filter(img => !updateData.images.includes(img));
+            for (const imageUrl of imagesToDelete) {
+                await deleteImageFromCloudinary(imageUrl);
+            }
+        }
+
+        // Update all fields except slug (which is auto-generated)
+        Object.keys(updateData).forEach(key => {
+            if (key !== 'slug') {
+                product[key] = updateData[key];
+            }
+        });
+
+        const updatedProduct = await Product.findByIdAndUpdate(
+            product._id,
+            updateData,
+            { new: true, runValidators: true }
+        ).populate('category', 'name slug');
+
+        res.status(200).json({
+            success: true,
+            data: product
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            error: error.message
+        });
     }
-    
-    if (!product) {
-      return res.status(404).json({
-        success: false,
-        error: 'Product not found'
-      });
-    }
-    
-    // Delete old images if new images are provided
-    if (updateData.images && product.images && JSON.stringify(updateData.images) !== JSON.stringify(product.images)) {
-      // Delete old images that are not in the new images array
-      const imagesToDelete = product.images.filter(img => !updateData.images.includes(img));
-      for (const imageUrl of imagesToDelete) {
-        await deleteImageFromCloudinary(imageUrl);
-      }
-    }
-    
-    // Update all fields except slug (which is auto-generated)
-    Object.keys(updateData).forEach(key => {
-      if (key !== 'slug') {
-        product[key] = updateData[key];
-      }
-    });
-    
-    await product.save();
-    await product.populate('category', 'name slug');
-    
-    res.status(200).json({
-      success: true,
-      data: product
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      error: error.message
-    });
-  }
 };
 
 // Toggle boolean fields
@@ -291,40 +294,40 @@ const toggleProductField = async (req, res) => {
 
 // Delete product
 const deleteProduct = async (req, res) => {
-  try {
-    const { id } = req.params;
-    
-    let product;
-    if (mongoose.Types.ObjectId.isValid(id)) {
-      product = await Product.findByIdAndDelete(id);
-    } else {
-      product = await Product.findOneAndDelete({ slug: id });
+    try {
+        const { id } = req.params;
+
+        let product;
+        if (mongoose.Types.ObjectId.isValid(id)) {
+            product = await Product.findByIdAndDelete(id);
+        } else {
+            product = await Product.findOneAndDelete({ slug: id });
+        }
+
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                error: 'Product not found'
+            });
+        }
+
+        // Delete associated images from Cloudinary
+        if (product.images && product.images.length > 0) {
+            for (const imageUrl of product.images) {
+                await deleteImageFromCloudinary(imageUrl);
+            }
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Product and associated image deleted successfully'
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
     }
-    
-    if (!product) {
-      return res.status(404).json({
-        success: false,
-        error: 'Product not found'
-      });
-    }
-    
-    // Delete associated images from Cloudinary
-    if (product.images && product.images.length > 0) {
-      for (const imageUrl of product.images) {
-        await deleteImageFromCloudinary(imageUrl);
-      }
-    }
-    
-    res.status(200).json({
-      success: true,
-      message: 'Product and associated image deleted successfully'
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
-  }
 };
 
 module.exports = {
